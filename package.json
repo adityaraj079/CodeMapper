@@ -1,0 +1,96 @@
+{
+  "name": "codemapper",
+  "displayName": "CodeMapper",
+  "publisher": "AdityaRaj079",
+  "description": "Intelligent repository mapping and LLM context generation",
+  "version": "0.0.1",
+  "engines": {
+    "vscode": "^1.140.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "activationEvents": [
+    "onStartupFinished"
+  ],
+  "main": "./out/extension.js",
+  "contributes": {
+    "commands": [
+      { "command": "codemapper.indexRepository", "title": "CodeMapper: Index Repository" },
+      { "command": "codemapper.rebuildIndex", "title": "CodeMapper: Rebuild Index" },
+      { "command": "codemapper.openGraph", "title": "CodeMapper: Open Graph" },
+      { "command": "codemapper.showCallers", "title": "CodeMapper: Show Function Callers" },
+      { "command": "codemapper.showCallees", "title": "CodeMapper: Show Function Callees" },
+      { "command": "codemapper.exportContext", "title": "CodeMapper: Export Context" },
+      { "command": "codemapper.refreshExplorer", "title": "CodeMapper: Refresh Explorer" },
+      { "command": "codemapper.updateAgents", "title": "CodeMapper: Update AGENTS.md Context" },
+      { "command": "codemapper.openSymbol", "title": "CodeMapper: Open Source" }
+    ],
+    "viewsContainers": {
+      "activitybar": [
+        { "id": "codemapper", "title": "CodeMapper", "icon": "media/codemapper.svg" }
+      ]
+    },
+    "views": {
+      "codemapper": [
+        { "id": "codemapper.explorer", "name": "Repository Map", "contextualTitle": "CodeMapper" }
+      ]
+    },
+    "menus": {
+      "view/title": [
+        { "command": "codemapper.indexRepository", "when": "view == codemapper.explorer", "group": "navigation" },
+        { "command": "codemapper.openGraph", "when": "view == codemapper.explorer", "group": "navigation" },
+        { "command": "codemapper.exportContext", "when": "view == codemapper.explorer", "group": "navigation" },
+        { "command": "codemapper.refreshExplorer", "when": "view == codemapper.explorer", "group": "navigation" }
+      ],
+      "view/item/context": [
+        { "command": "codemapper.showCallers", "when": "view == codemapper.explorer && viewItem == codemapperFunction", "group": "inline" },
+        { "command": "codemapper.showCallees", "when": "view == codemapper.explorer && viewItem == codemapperFunction", "group": "inline" }
+      ]
+    },
+    "configuration": {
+      "title": "CodeMapper",
+      "properties": {
+        "codemapper.enabled": { "type": "boolean", "default": true, "description": "Enable CodeMapper features." },
+        "codemapper.autoIndex": { "type": "boolean", "default": true, "description": "Automatically index trusted Python workspaces on startup." },
+        "codemapper.autoUpdate": { "type": "boolean", "default": true, "description": "Update the index when Python files change." },
+        "codemapper.autoExport": { "type": "boolean", "default": false, "description": "Regenerate CodeMapper context files after indexing." },
+        "codemapper.pythonPath": { "type": "string", "default": "", "description": "Python 3 executable to use; empty detects python3 (or py -3 on Windows)." },
+        "codemapper.exclude": {
+          "type": "array",
+          "items": { "type": "string" },
+          "default": ["**/.git/**", "**/.venv/**", "**/venv/**", "**/node_modules/**", "**/__pycache__/**", "**/build/**", "**/dist/**", "**/.codemapper/**"],
+          "description": "Relative paths or glob patterns excluded from Python analysis."
+        },
+        "codemapper.maxGraphNodes": { "type": "number", "default": 200, "minimum": 10, "maximum": 5000, "description": "Maximum number of nodes displayed in one graph view." },
+        "codemapper.outputDirectory": { "type": "string", "default": ".codemapper", "description": "Workspace-relative location for generated context files." }
+      }
+    }
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run compile",
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./",
+    "pretest": "npm run compile && npm run lint",
+    "lint": "eslint src",
+    "test": "npm run test:analyzer && vscode-test",
+    "test:analyzer": "python3 -m unittest discover -s test"
+  },
+  "devDependencies": {
+    "@types/mocha": "^10.0.10",
+    "@types/node": "24.x",
+    "@types/vscode": "^1.140.0",
+    "@vscode/test-cli": "^0.0.15",
+    "@vscode/test-electron": "^3.0.0",
+    "eslint": "^10.5.0",
+    "typescript": "^6.0.3",
+    "typescript-eslint": "^8.61.1"
+  },
+  "overrides": {
+    "diff": "^8.0.4",
+    "serialize-javascript": "^7.0.6"
+  },
+  "dependencies": {
+    "cytoscape": "^3.34.3"
+  }
+}
